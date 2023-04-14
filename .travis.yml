@@ -1,0 +1,16 @@
+language: generic
+sudo: required
+services: 
+  - docker
+
+before_install:
+  - docker built -t trishtenac/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true trishtenac/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t trishtenac/multi-client ./client
+  - docket build -t trishtenac/multi-nginx ./nginx
+  - docker build -t trishtenac/multi-server ./server
+  - docker build -t trishtenac/multi-worker ./worker
